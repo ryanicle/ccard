@@ -17,3 +17,5 @@ Run `rake cards:populate`
 ## Run unit tests
 Run `rake test`
 
+## Run app
+Open `http://localhost:3000` in browser
