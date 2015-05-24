@@ -1,25 +1,275 @@
+<%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js' %>
+<%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js' %>
 <p id="notice"><%= notice %></p>
 
-<h1>Listing Cards</h1>
+<ul class="nav nav-tabs">
+  <li role="presentation" class="active"><a data-toggle="tab" href="#cards">Cards</a></li>
+  <li role="presentation"><a data-toggle="tab" href="#cards_mustache">Cards (Mustache version)</a></li>
+</ul>
 
-<table>
-  <thead>
-    <tr>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<div class="tab-content">
+  <div id="cards" class="tab-pane fade in active">
+    <h1>Cards</h1>
 
-  <tbody>
-    <% @cards.each do |card| %>
-      <tr>
-        <td><%= link_to 'Show', card %></td>
-        <td><%= link_to 'Edit', edit_card_path(card) %></td>
-        <td><%= link_to 'Destroy', card, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Provider</th>
+          <th colspan="3"></th>
+        </tr>
+      </thead>
 
-<br>
+      <tbody>
+        <% @cards.each do |card| %>
+          <tr>
+            <td><%= card.name %></td>
+            <td><%= card.number %></td>
+            <td><%= card.provider.capitalize %></td>
+            <td><%= link_to 'Show', card %></td>
+            <td><%= link_to 'Edit', edit_card_path(card) %></td>
+            <td><%= link_to 'Delete', card, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-<%= link_to 'New Card', new_card_path %>
+    <br>
+
+    <%= link_to 'New Card', new_card_path %>
+  </div>
+  <div id="cards_mustache" class="tab-pane">
+    <script id="cards_mustache_tpl" type="text/html">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Number</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{#cards}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{number}}</td>
+              <td><a class="show" id="show-{{id}}" href="#">Show</a></td>
+              <td><a class="edit" id="edit-{{id}}" href="#">Edit</a></td>
+              <td><a class="delete" id="delete-{{id}}" href="#">Delete</a></td>
+            </tr>
+          {{/cards}}
+        </tbody>
+      </table>
+    </script>
+    Cards (Mustache version)
+
+  </div>
+</div>
+
+<script id="show-card" type="text/html">
+  <form class="form-horizontal" id="edit_card_1" action="/cards/1" accept-charset="UTF-8" method="post">
+
+    <div class="form-group">
+      <label class="col-sm-2" for="card_name">Name</label>
+      <div class="col-sm-6">
+        <input class="form-control" type="text" value="{{name}}" name="card[name]" id="card_name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_number">Number</label>
+      <div class="col-sm-6">
+        <input placeholder="1234-4567-7890-1111" class="form-control" type="text" value="{{number}}" name="card[number]" id="card_number">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_expiry_date">Expiry date</label>
+      <div class="col-sm-10">
+        <div class="row">
+          <div class="col-sm-4">
+            <select class="form-control" name="card[expired_month]" id="card_expired_month">
+              {{#months}}
+                <option value="{{value}}" {{sel}}>{{label}}</option>
+              {{/months}}
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <select class="form-control" name="card[expired_year]" id="card_expired_year">
+              {{#years}}
+                <option value="{{value}}" {{sel}}>{{label}}</option>
+              {{/years}}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_security_code">Security code</label>
+      <div class="col-sm-2">
+        <input class="form-control" type="text" value="{{security_code}}" name="card[security_code]" id="card_security_code">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_provider">Provider</label>
+      <div class="col-sm-4">
+        <select class="form-control" name="card[provider]" id="card_provider">
+          {{#providers}}
+            <option value="{{value}}" {{sel}}>{{label}}</option>
+          {{/providers}}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_interest_rate">Interest rate</label>
+      <div class="col-sm-3">
+        <input class="form-control" type="text" value="{{interest_rate}}" name="card[interest_rate]" id="card_interest_rate">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_category">Category</label>
+      <div class="col-sm-4">
+        <select class="form-control" name="card[category]" id="card_category">
+          {{#categories}}
+            <option value="{{value}}" {{sel}}>{{label}}</option>
+          {{/categories}}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2" for="card_image">Image</label>
+      <div class="col-sm-4">
+        <input class="form-control" type="text" value="{{image}}" name="card[image]" id="card_image">
+      </div>
+    </div>
+  </form>
+</script>
+<script type="text/javascript">
+$(document).ready(function () {
+  var cards = {cards: $.parseJSON('<%= @cards.to_json.html_safe %>')};
+  $('#cards_mustache').html(Mustache.render($('#cards_mustache_tpl').html(), cards));
+  $('.show').each(function (index) {
+    var ids = this.id.split('-');
+    $('#' + this.id).on('click', function () {
+      window.location.href = '/cards/' + ids[1];
+    });
+  });
+
+  $('.edit').each(function (index) {
+    var ids = this.id.split('-');
+    $('#' + this.id).on('click', function () {
+      $.ajax({
+        url: '/api/v1/cards/' + ids[1] + '.json',
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          var months = [
+            {label: 'Janurary', value: 1},
+            {label: 'Feburary', value: 2},
+            {label: 'March', value: 3},
+            {label: 'April', value: 4},
+            {label: 'May', value: 5},
+            {label: 'June', value: 6},
+            {label: 'July', value: 7},
+            {label: 'August', value: 8},
+            {label: 'September', value: 9},
+            {label: 'October', value: 10},
+            {label: 'November', value: 11},
+            {label: 'December', value: 12}
+          ];
+          months.forEach(function (month, i) {
+            if (response.expired_month == month.value)
+              months[i].sel = 'selected';
+            else
+              months[i].sel = '';
+          });
+          
+
+          var currentYear = new Date().getFullYear();
+          var years = [];
+          for (i = 0; i <= 5; i++) {
+            years.push({
+              label: currentYear + i,
+              value: currentYear + i
+            });
+          }
+          years.forEach(function (year, i) {
+            if (response.expired_year == year.value)
+              years[i].sel = 'selected';
+            else
+              years[i].sel = '';
+          });
+
+          var providers = [
+            {label: 'Visa', value: 'visa'},
+            {label: 'Mastercard', value: 'mastercard'}
+          ];
+          providers.forEach(function (provider, i) {
+            if (response.provider == provider.value)
+              providers[i].sel = 'selected';
+            else
+              providers[i].sel = '';
+          });
+
+          var categories = [
+            {label: 'Category A', value: 'Category A'},
+            {label: 'Category B', value: 'Category B'},
+            {label: 'Category C', value: 'Category C'}
+          ];
+          categories.forEach(function (category, i) {
+            if (response.category == category.value)
+              categories[i].sel = 'selected';
+            else
+              categories[i].sel = '';
+          });
+          
+          var options = response;
+          options.months = months;
+          options.years = years;
+          options.providers = providers;
+          options.categories = categories;
+          form(options);
+        }
+      });
+      
+    });
+  });
+
+  $('.delete').each(function (index) {
+    var ids = this.id.split('-');
+    $('#' + this.id).on('click', function () {
+      alert('Delete ' + this.id);
+    });
+  });
+
+  var form = function (options) {
+    bootbox.dialog({
+      message: Mustache.render($('#show-card').html(), options),
+      title: "Credit Card",
+      buttons: {
+        cancel: {
+          label: "Cancel",
+          className: "btn-default",
+          callback: function() {
+            this.modal('hide');
+          }
+        },
+        ok: {
+          label: "Save",
+          className: "btn-primary",
+          callback: function() {
+            this.modal('hide');
+          }
+        }
+      }
+    });
+  };
+
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+    var activeTab = $(e.target).text(); // Get the name of active tab
+    var previousTab = $(e.relatedTarget).text(); // Get the name of previous tab
+    $(".active-tab span").html(activeTab);
+    $(".previous-tab span").html(previousTab);
+  });
+});
+</script>
