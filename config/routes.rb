@@ -6,6 +6,12 @@ Rails.application.routes.draw do
   root 'cards#index'
   resources :cards
 
+  namespace :api do
+    namespace :v1 do
+      resources :cards
+    end
+  end
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
